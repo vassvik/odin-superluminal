@@ -7,11 +7,6 @@ import "core:fmt"
 
 main :: proc() {
 	foo :: proc() {
-		bar :: proc(a: int) {
-			superluminal.event("bar", fmt.tprintf("a = %d", a));
-			win32.sleep(1000);
-		}
-
 		superluminal.event("foo", "all");
 		
 		{
@@ -20,6 +15,11 @@ main :: proc() {
 		}
 		
 		{
+			bar :: proc(a: int) {
+				superluminal.event("bar", fmt.tprintf("a = %d", a));
+				win32.sleep(1000);
+			}
+
 			superluminal.event("foo", "bars");
 			bar(1);
 			bar(2);
