@@ -16,7 +16,7 @@ main :: proc() {
 		
 		{
 			bar :: proc(a: int) {
-				superluminal.event("bar", fmt.tprintf("a = %d", a));
+				superluminal.event("bar", fmt.tprintf("a = %d\x00", a));
 				win32.sleep(1000);
 			}
 
