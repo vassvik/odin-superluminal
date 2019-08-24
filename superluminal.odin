@@ -1,6 +1,6 @@
 package superluminal
 
-foreign import superluminal { "superluminal.lib" };
+foreign import superluminal { "lib/superluminal.lib" };
 
 foreign superluminal {
     begin_event :: proc(inID: cstring) ---;

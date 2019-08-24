@@ -1,10 +1,3 @@
-# odin-superluminal
-
-Odin bindings and wrapper for [Superluminal Performance](https://www.superluminal.eu/). This is achieved by making a thin C wrapper that around PerformanceAPI that is callable from Odin. Only the `BeginEvent` and `EndEvent` part of the API is available.
-
-## Example
-
-```
 package test 
 
 import superluminal "shared:odin-superluminal"
@@ -37,6 +30,3 @@ main :: proc() {
 	superluminal.event("main");
 	foo();
 }
-```
-
-![Example screenshot](screenshot.png)
