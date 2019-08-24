@@ -15,7 +15,6 @@ import "core:fmt"
 main :: proc() {
     foo :: proc() {
         bar :: proc(a: int) {
-            @static buf: [16]byte;
             superluminal.event("bar", fmt.tprintf("a = %d", a));
             win32.sleep(1000);
         }
