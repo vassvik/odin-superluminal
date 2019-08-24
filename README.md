@@ -4,7 +4,7 @@ Odin bindings and wrapper for [Superluminal Performance](https://www.superlumina
 
 ## Example
 
-```
+```go
 package test 
 
 import superluminal "shared:odin-superluminal"
