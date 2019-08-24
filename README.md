@@ -2,7 +2,12 @@
 
 Odin bindings and wrapper for [Superluminal Performance](https://www.superluminal.eu/). This is achieved by making a thin C wrapper that around PerformanceAPI that is callable from Odin. Only the `BeginEvent` and `EndEvent` part of the API is available.
 
-The procedure `superluminal.event` an overload of the `superluminal.event_id` and `superluminal.event_id_and_data` procedures, which takes 
+Includes a header file and a static library file of Superluminal Performance's PerformanceAPI as of version 1.0.2800.1129.
+
+## Instructions
+
+Run `build.bat` from a terminal with the proper environmental variables set to build the wrapper library.
+
 
 ## API
 
