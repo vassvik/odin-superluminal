@@ -1,80 +1,81 @@
 # odin-superluminal
 
-Odin bindings and wrapper for [Superluminal Performance](https://www.superluminal.eu/). This is achieved by making a thin C wrapper that around PerformanceAPI that is callable from Odin. Only the `BeginEvent` and `EndEvent` part of the API is available.
+Odin bindings for [Superluminal Performance](https://www.superluminal.eu/)'s PerformanceAPI, which are used to add instrumentation sampling when profiling using Superluminal Performance. 
 
-Includes a header file and a static library file of Superluminal Performance's PerformanceAPI as of version 1.0.2800.1129.
+Includes a copy of the header files and one of the library files as of Superluminal Performance 1.0.6470.3335, which corresponds to PerformanceAPI version 3.0. 
 
 ## Instructions
 
-Run `build.bat` from a terminal with the proper environmental variables set to build the wrapper library.
+In Windows:
+
+```
+cd /path/to/Odin/shared
+git clone https://github.com/vassvik/odin-superluminal.git
+```
+
+Now simply add `import "shared:superluminal"` in you want to instrument and call `InstrumentationScope` wherever you want. 
+
+Compile your exe and run it in Superluminal Performance, and everything should just work. 
+
+To get function names other than the scopes defined by the instrumentation API you should compile with `-debug`. 
+
 
 
 ## API
 
 ```go
-package superluminal
+// The following are direct C-bindings
+BeginEvent_N :: proc(inID: [^]u8, inIDLength: u16, inData: [^]u8, inDataLength: u16, inColor: u32) ---;
+EndEvent     :: proc() -> SuppressTailCallOptimization ---;
 
-foreign import superluminal { "lib/superluminal.lib" };
+SetCurrentThreadName_N :: proc(inThreadName: [^]u8, inThreadNameLength: u16) ---;
 
-foreign superluminal {
-    begin_event :: proc(inID: cstring) ---;
-    begin_event_data :: proc(inID, inData: cstring) ---;
-    end_event :: proc() ---;
-}
+RegisterFiber    :: proc(inFiberID: u64) ---;
+UnregisterFiber  :: proc(inFiberID: u64) ---;
+BeginFiberSwitch :: proc(inCurrentFiberID, inNewFiberID: u64) ---;
+EndFiberSwitch   :: proc(inFiberID: u64) ---;
 
-@(deferred_none=end_event)
-event_id :: proc(inID: string) {
-    begin_event(cast(cstring)&inID[0]);
-}
 
-@(deferred_none=end_event)
-event_id_and_data :: proc(inID, inData: string) {
-    begin_event_data(cast(cstring)&inID[0], cast(cstring)&inData[0]);
-}
+// This is a port of the MAKE_COLOR macro
+MAKE_COLOR :: #force_inline proc(r, g, b: u8) -> u32
 
-event :: proc{event_id, event_id_and_data};
+// This is a helper that roughly maps to the usage of the InstrumentationScope class in PerformanceAPI.h
+// It calls EndEvent when it next goes out of scope
+InstrumentationScope :: proc(inID: string, inData: string = "", inColor: u32 = DEFAULT_COLOR)
+
+// This is a wrapper around SetCurrentThreadName_N so we can simply just pass an Odin-string
+SetCurrentThreadName :: proc(inThreadName: string)
 ```
 
-Note that both overloads in the `event` procedure implicitly defer a call to  `end_event` at the end of the *callee's* scope. 
-
-**Warning: This assume that all passed strings are zero-terminated. This is the case for string constants and literals, but not necessarily in heap-allocated strings.** 
+See `include/PerformanceAPI_capi.h` and `include/PerformanceAPI.h` for more details and options. 
 
 ## Example
 
-The following is compiled with `odin build . -debug`:
-
 ```go
-package test 
+package test
 
+import "core:fmt"
+import "core:math/rand"
 import superluminal "shared:odin-superluminal"
 
-import win32 "core:sys/win32"
-import "core:fmt"
-
 main :: proc() {
-    foo :: proc() {
-        superluminal.event("foo", "all");
-        
-        {
-            superluminal.event("foo", "sleep");
-            win32.sleep(1000);
-        }
-        
-        {
-            bar :: proc(a: int) {
-                superluminal.event("bar", fmt.tprintf("a = %d\x00", a));
-                win32.sleep(1000);
-            }
+	superluminal.InstrumentationScope("Main")
 
-            superluminal.event("foo", "bars");
-            bar(1);
-            bar(2);
-            bar(3);
-        }
-    }
-    superluminal.event("main");
-    foo();
+	for i in 0..<10 {
+		superluminal.InstrumentationScope("Outer", fmt.tprintf("i=%d", i))
+		for j in 1..<10 {
+			superluminal.InstrumentationScope("Inner", fmt.tprintf("j=%d", j))
+			sum := f32(0.0)
+			{
+				superluminal.InstrumentationScope("Sum", fmt.tprintf("i=%d j=%d", i, j))
+				for k in 0..<j*1_000_000 {
+					sum += rand.float32()
+				}
+			}
+			fmt.println(sum)
+		}
+	}
+	fmt.println("Done")
 }
 ```
-
-![Example screenshot](screenshot.png)
+![image](https://github.com/user-attachments/assets/30e5d59b-d7c6-49b2-8722-1cfddc88c254)
