@@ -1,31 +1,25 @@
-package test 
+package test
 
+import "core:fmt"
+import "core:math/rand"
 import superluminal "shared:odin-superluminal"
 
-import win32 "core:sys/win32"
-import "core:fmt"
-
 main :: proc() {
-    foo :: proc() {
-        superluminal.event("foo", "all");
-        
-        {
-            superluminal.event("foo", "sleep");
-            win32.sleep(1000);
-        }
-        
-        {
-            bar :: proc(a: int) {
-                superluminal.event("bar", fmt.tprintf("a = %d\x00", a));
-                win32.sleep(1000);
-            }
+	superluminal.InstrumentationScope("Main")
 
-            superluminal.event("foo", "bars");
-            bar(1);
-            bar(2);
-            bar(3);
-        }
-    }
-    superluminal.event("main");
-    foo();
+	for i in 0..<10 {
+		superluminal.InstrumentationScope("Outer", fmt.tprintf("i=%d", i))
+		for j in 1..<10 {
+			superluminal.InstrumentationScope("Inner", fmt.tprintf("j=%d", j))
+			sum := f32(0.0)
+			{
+				superluminal.InstrumentationScope("Sum", fmt.tprintf("i=%d j=%d", i, j))
+				for k in 0..<j*1_000_000 {
+					sum += rand.float32()
+				}
+			}
+			fmt.println(sum)
+		}
+	}
+	fmt.println("Done")
 }
