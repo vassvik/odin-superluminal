@@ -1,8 +1,8 @@
 # odin-superluminal
 
-Odin bindings for [Superluminal Performance](https://www.superluminal.eu/)'s PerformanceAPI, which are used to add instrumentation sampling when profiling using Superluminal Performance. 
+Odin bindings for [Superluminal Performance](https://www.superluminal.eu/)'s instrumentation API called PerformanceAPI.
 
-Includes a copy of the header files and one of the library files as of Superluminal Performance 1.0.6470.3335, which corresponds to PerformanceAPI version 3.0. 
+Includes a copy of the header files for documentation purposes and one of the library files for Windows for easy integration, as of Superluminal Performance 1.0.6470.3335, which corresponds to PerformanceAPI version 3.0. 
 
 ## Instructions
 
