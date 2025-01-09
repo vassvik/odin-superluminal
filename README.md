@@ -8,7 +8,7 @@ Includes a copy of the header files for documentation purposes and one of the li
 
 In Windows:
 
-```
+```batch
 cd /path/to/Odin/shared
 git clone https://github.com/vassvik/odin-superluminal.git
 ```
@@ -23,7 +23,7 @@ To get function names other than the scopes defined by the instrumentation API y
 
 ## API
 
-```go
+```odin
 // The following are direct C-bindings
 BeginEvent_N :: proc(inID: [^]u8, inIDLength: u16, inData: [^]u8, inDataLength: u16, inColor: u32) ---;
 EndEvent     :: proc() -> SuppressTailCallOptimization ---;
