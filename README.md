@@ -13,7 +13,7 @@ cd /path/to/Odin/shared
 git clone https://github.com/vassvik/odin-superluminal.git
 ```
 
-Now simply add `import "shared:superluminal"` in you want to instrument and call `InstrumentationScope` wherever you want. 
+Now simply add `import "shared:superluminal"` in the files you want to add instrumentation to and call `InstrumentationScope` wherever you want. 
 
 Compile your exe and run it in Superluminal Performance, and everything should just work. 
 
