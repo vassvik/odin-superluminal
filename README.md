@@ -51,7 +51,7 @@ See `include/PerformanceAPI_capi.h` and `include/PerformanceAPI.h` for more deta
 
 ## Example
 
-```go
+```odin
 package test
 
 import "core:fmt"
